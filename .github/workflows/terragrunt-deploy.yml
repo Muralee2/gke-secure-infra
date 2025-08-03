@@ -31,8 +31,7 @@ jobs:
         run: |
           echo "${{ secrets.GCP_CREDENTIALS }}" > gcp-key.json
           gcloud auth activate-service-account --key-file=gcp-key.json
-          gcloud config set project your-gcp-project-id
-          gcloud auth application-default login --quiet --key-file=gcp-key.json
+          gcloud config set project $(jq -r .project_id gcp-key.json)
 
       - name: Terragrunt Init
         run: terragrunt init
