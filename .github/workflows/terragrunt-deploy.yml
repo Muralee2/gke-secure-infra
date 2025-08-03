@@ -40,8 +40,13 @@ jobs:
       - name: Set project
         run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
 
-      # Replace with your actual deploy step, for example:
-      - name: Deploy Terraform
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Terraform Init and Apply
         run: |
           terraform init
           terraform apply -auto-approve
+
