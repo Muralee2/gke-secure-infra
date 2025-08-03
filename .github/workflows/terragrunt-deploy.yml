@@ -28,7 +28,7 @@ jobs:
           sudo mv terragrunt /usr/local/bin/terragrunt
 
       - name: Write GCP credentials to file
-        run: echo "${{ secrets.GCP_CREDENTIALS_JSON }}" > gcp-key.json
+        run: printf '%s' "${{ secrets.GCP_CREDENTIALS_JSON }}" > gcp-key.json
 
       - name: Authenticate with GCP
         run: |
