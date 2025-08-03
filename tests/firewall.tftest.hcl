@@ -1,8 +1,8 @@
-run "firewall_plan" {
+run "plan" {
   command = plan
 
   assert {
     condition     = plan.exit_code == 0
-    error_message = "Firewall rules plan failed"
+    error_message = "Basic test plan failed"
   }
 }
