@@ -1,7 +1,8 @@
 run "cluster_config" {
-  command = "plan"
+  command = plan
+
   assert {
-    condition     = true
-    error_message = "Cluster config plan should succeed"
+    condition     = plan.exit_code == 0
+    error_message = "Cluster config plan failed"
   }
 }
