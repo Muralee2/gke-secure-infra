@@ -1,0 +1,48 @@
+name: Deploy GKE Secure Infra with Terragrunt
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
+
+      - name: Install Terragrunt
+        run: |
+          curl -L -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/terragrunt
+
+      - name: Authenticate with GCP
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS }}" > gcp-key.json
+          gcloud auth activate-service-account --key-file=gcp-key.json
+          gcloud config set project your-gcp-project-id
+          gcloud auth application-default login --quiet --key-file=gcp-key.json
+
+      - name: Terragrunt Init
+        run: terragrunt init
+        working-directory: ./live/dev
+
+      - name: Terragrunt Plan
+        run: terragrunt plan -out=tfplan
+        working-directory: ./live/dev
+
+      - name: Terragrunt Apply
+        run: terragrunt apply -auto-approve tfplan
+        working-directory: ./live/dev
+
